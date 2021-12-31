@@ -5,8 +5,9 @@ WireGuard autoinstaller written in Bash
 
 * Ubuntu (18.04 and 20.04)
 * Debian (10, 11)
-* CentOS (7)
-* Fedora
+* CentOS (7, 8)
+* Rocky Linux 8
+* Amazon Linux 2
 
 This script will install automatically the Wireguard server and generate client configuration files for a secure connection.
 
