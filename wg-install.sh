@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # wg-install.sh
-# run on the first time to configure the server and the first client certificate.
-# the following times it will just generate client configs
+# run on the first time to configure the server and the first client config
+# the following times it will just generate additional client configs
+#
 # Besmir Zanaj - 2020
 
 
@@ -30,10 +31,12 @@ if [[ ! -e /dev/net/tun ]]; then
     exit
 fi
 
+OS=`uname -s`
 
 if [ -e /etc/centos-release ]; then
+    VER=$(rpm -E %{rhel})
     DISTRO="CentOS"
-    echo "[i] OS: " $DISTRO
+    echo "[i] OS: $DISTRO $VER"
 elif [ -e /etc/debian_version ]; then
     DISTRO=$( lsb_release -ds )
     echo "[i] OS: " $DISTRO
@@ -100,27 +103,31 @@ if [ ! -f "$WG_CONFIG" ]; then
         esac
     fi
 
-    echo "This systems distro is ${DISTRO:0:12} or full ${DISTRO}"
 
-    if [ "${DISTRO:0:12}" == "Ubuntu 18.04" ]; then
+    if [[ "${DISTRO:0:12}" == "Ubuntu 18.04" ]]; then
         add-apt-repository ppa:wireguard/wireguard -y
         apt update
         apt install wireguard qrencode -y #iptables-persistent -y
-    elif [ "${DISTRO:0:12}" == "Ubuntu 20.04" ]; then
+    elif [[ "${DISTRO:0:12}" == "Ubuntu 20.04" ]]; then
 	apt update
         apt install wireguard qrencode -y
-    elif [ "${DISTRO:0:19}" == "Debian GNU/Linux 11" ]; then
-	    apt update
-	    apt install wireguard qrencode -y
-    elif [ "${DISTRO:0:19}" == "Debian GNU/Linux 10" ]; then
+    elif [[ "${DISTRO:0:19}" == "Debian GNU/Linux 11" ]]; then
+	apt update
+	apt install wireguard qrencode -y
+    elif [[ "${DISTRO:0:19}" == "Debian GNU/Linux 10" ]]; then
         apt update
-	    apt install linux-headers-$(uname -r) -y
+	apt install linux-headers-$(uname -r) -y
         apt install wireguard qrencode -y #iptables-persistent -y
-    elif [ "$DISTRO" == "CentOS" ]; then
-        yum install -y epel-release https://www.elrepo.org/elrepo-release-7.el7.elrepo.noarch.rpm
+    elif [[ "$DISTRO" == "CentOS" && "$VER" == "7" ]]; then
+        echo "ok for cnetos 7"
+	yum install -y epel-release elrepo-release
         yum install -y yum-plugin-elrepo
-        yum install -y kmod-wireguard wireguard-tools qrencode bc firewalld wget curl vim
-    elif [ "$DISTRO" == "Amazon" ]; then
+        yum install -y kmod-wireguard wireguard-tools qrencode bc
+    elif [[ "$DISTRO" == "CentOS" && "$VER" == "8" ]]; then
+        echo "ok for centos 8"
+	yum install -y epel-release elrepo-release
+        yum install -y kmod-wireguard wireguard-tools qrencode bc
+    elif [[ "$DISTRO" == "Amazon" ]]; then
         amazon-linux-extras install epel -y
         yum install wireguard-tools bc qrencode -y
     fi
