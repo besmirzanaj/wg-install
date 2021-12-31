@@ -105,31 +105,31 @@ if [ ! -f "$WG_CONFIG" ]; then
 
 
     if [[ "${DISTRO:0:12}" == "Ubuntu 18.04" ]]; then
-        add-apt-repository ppa:wireguard/wireguard -y
-        apt update
-        apt install wireguard qrencode -y #iptables-persistent -y
+      add-apt-repository ppa:wireguard/wireguard -y
+      apt update
+      apt install wireguard qrencode -y #iptables-persistent -y
     elif [[ "${DISTRO:0:12}" == "Ubuntu 20.04" ]]; then
-	apt update
-        apt install wireguard qrencode -y
+      apt update
+      apt install wireguard qrencode -y
     elif [[ "${DISTRO:0:19}" == "Debian GNU/Linux 11" ]]; then
-	apt update
-	apt install wireguard qrencode -y
+      apt update
+      apt install wireguard qrencode -y
     elif [[ "${DISTRO:0:19}" == "Debian GNU/Linux 10" ]]; then
-        apt update
-	apt install linux-headers-$(uname -r) -y
-        apt install wireguard qrencode -y #iptables-persistent -y
+      apt update
+      apt install linux-headers-$(uname -r) -y
+      apt install wireguard qrencode -y #iptables-persistent -y
     elif [[ "$DISTRO" == "CentOS" && "$VER" == "7" ]]; then
-        echo "ok for cnetos 7"
-	yum install -y epel-release elrepo-release
-        yum install -y yum-plugin-elrepo
-        yum install -y kmod-wireguard wireguard-tools qrencode bc
+      echo "ok for cnetos 7"
+      yum install -y epel-release elrepo-release
+      yum install -y yum-plugin-elrepo
+      yum install -y kmod-wireguard wireguard-tools qrencode bc
     elif [[ "$DISTRO" == "CentOS" && "$VER" == "8" ]]; then
-        echo "ok for centos 8"
-	yum install -y epel-release elrepo-release
-        yum install -y kmod-wireguard wireguard-tools qrencode bc
+      echo "ok for centos 8"
+      yum install -y epel-release elrepo-release
+      yum install -y kmod-wireguard wireguard-tools qrencode bc
     elif [[ "$DISTRO" == "Amazon" ]]; then
-        amazon-linux-extras install epel -y
-        yum install wireguard-tools bc qrencode -y
+      amazon-linux-extras install epel -y
+      yum install wireguard-tools bc qrencode -y
     fi
 
     SERVER_PRIVKEY=$( wg genkey )
