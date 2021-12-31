@@ -103,7 +103,7 @@ if [ ! -f "$WG_CONFIG" ]; then
         esac
     fi
 
-
+    echo "[i] Installing Wireguard package and its depencencies"
     if [[ "${DISTRO:0:12}" == "Ubuntu 18.04" ]]; then
       add-apt-repository ppa:wireguard/wireguard -y
       apt update
@@ -119,18 +119,18 @@ if [ ! -f "$WG_CONFIG" ]; then
       apt install linux-headers-$(uname -r) -y
       apt install wireguard qrencode -y #iptables-persistent -y
     elif [[ "$DISTRO" == "CentOS" && "$VER" == "7" ]]; then
-      echo "ok for cnetos 7"
       yum install -y epel-release elrepo-release
       yum install -y yum-plugin-elrepo
       yum install -y kmod-wireguard wireguard-tools qrencode bc
     elif [[ "$DISTRO" == "CentOS" && "$VER" == "8" ]]; then
-      echo "ok for centos 8"
       yum install -y epel-release elrepo-release
       yum install -y kmod-wireguard wireguard-tools qrencode bc
     elif [[ "$DISTRO" == "Amazon" ]]; then
       amazon-linux-extras install epel -y
       yum install wireguard-tools bc qrencode -y
     fi
+
+    echo "[i] Installed Wireguard package and its depencencies"
 
     SERVER_PRIVKEY=$( wg genkey )
     SERVER_PUBKEY=$( echo $SERVER_PRIVKEY | wg pubkey )
