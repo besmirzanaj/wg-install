@@ -115,9 +115,11 @@ if [ ! -f "$WG_CONFIG" ]; then
       apt update
       apt install wireguard qrencode -y
     elif [[ "${DISTRO:0:19}" == "Debian GNU/Linux 10" ]]; then
+      "echo 'deb http://deb.debian.org/debian buster-backports main contrib non-free' > /etc/apt/sources.list.d/buster-backports.list"
+      echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
+      echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
       apt update
-      apt install linux-headers-$(uname -r) -y
-      apt install wireguard qrencode -y #iptables-persistent -y
+      apt install wireguard qrencode iptables-persistent -y
     elif [[ "$DISTRO" == "CentOS" && "$VER" == "7" ]]; then
       yum install -y epel-release elrepo-release
       yum install -y yum-plugin-elrepo
