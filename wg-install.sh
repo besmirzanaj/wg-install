@@ -108,7 +108,7 @@ if [ ! -f "$WG_CONFIG" ]; then
       add-apt-repository ppa:wireguard/wireguard -y
       apt update
       apt install wireguard qrencode -y #iptables-persistent -y
-    elif [[ "${DISTRO:0:12}" == "Ubuntu 20.04" ]]; then
+    elif [[ "${DISTRO:0:12}" == *"Ubuntu 20.04"* ]] || [[ "${DISTRO:0:12}" == *"Ubuntu 22.04"* ]]; then
       apt update
       apt install wireguard qrencode -y
     elif [[ "${DISTRO:0:19}" == "Debian GNU/Linux 11" ]]; then
@@ -130,6 +130,9 @@ if [ ! -f "$WG_CONFIG" ]; then
     elif [[ "$DISTRO" == "Amazon" ]]; then
       amazon-linux-extras install epel -y
       yum install wireguard-tools bc qrencode -y
+    else
+      echo "not supported OS"
+      exit
     fi
 
     echo "[i] Installed Wireguard package and its depencencies"
