@@ -2,7 +2,7 @@
 
 [WireGuard](https://www.wireguard.com) [road warrior](http://en.wikipedia.org/wiki/Road_warrior_%28computing%29) installer for 
 
-* Ubuntu (18.04 and 20.04)
+* Ubuntu (18.04, 20.04 and 22.04)
 * Debian (10, 11)
 * CentOS (7, 8)
 * Rocky Linux 8
