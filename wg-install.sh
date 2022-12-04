@@ -39,7 +39,7 @@ if [ -e /etc/centos-release ]; then
     echo "[i] OS: $DISTRO $VER"
 elif [ -e /etc/rocky-release ]; then
     VER=$(rpm -E %{rhel})
-    DISTRO="Rocky Linux"
+    DISTRO="RockyLinux"
     echo "[i] OS: $DISTRO $VER"
 elif [ -e /etc/debian_version ]; then
     DISTRO=$( lsb_release -ds )
@@ -130,6 +130,12 @@ if [ ! -f "$WG_CONFIG" ]; then
       yum install -y kmod-wireguard wireguard-tools qrencode bc
     elif [[ "$DISTRO" == "CentOS" && "$VER" == "8" ]]; then
       yum install -y epel-release elrepo-release
+      yum install -y kmod-wireguard wireguard-tools qrencode bc
+    elif [[ "$DISTRO" == "RockyLinux" && "$VER" == "8" ]]; then
+      dnf install -y epel-release elrepo-release
+      yum install -y kmod-wireguard wireguard-tools qrencode bc
+    elif [[ "$DISTRO" == "RockyLinux" && "$VER" == "9" ]]; then
+      dnf install -y epel-release elrepo-release
       yum install -y kmod-wireguard wireguard-tools qrencode bc
     elif [[ "$DISTRO" == "Amazon" ]]; then
       amazon-linux-extras install epel -y
