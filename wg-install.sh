@@ -37,6 +37,10 @@ if [ -e /etc/centos-release ]; then
     VER=$(rpm -E %{rhel})
     DISTRO="CentOS"
     echo "[i] OS: $DISTRO $VER"
+elif [ -e /etc/rocky-release ]; then
+    VER=$(rpm -E %{rhel})
+    DISTRO="Rocky Linux"
+    echo "[i] OS: $DISTRO $VER"
 elif [ -e /etc/debian_version ]; then
     DISTRO=$( lsb_release -ds )
     echo "[i] OS: " $DISTRO
