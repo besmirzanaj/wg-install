@@ -132,11 +132,11 @@ if [ ! -f "$WG_CONFIG" ]; then
       yum install -y epel-release elrepo-release
       yum install -y kmod-wireguard wireguard-tools qrencode bc
     elif [[ "$DISTRO" == "RockyLinux" && "$VER" == "8" ]]; then
-      dnf install -y epel-release elrepo-release
-      yum install -y kmod-wireguard wireguard-tools qrencode bc
+      dnf install -y epel-release
+      yum install -y wireguard-tools qrencode
     elif [[ "$DISTRO" == "RockyLinux" && "$VER" == "9" ]]; then
-      dnf install -y epel-release elrepo-release
-      yum install -y kmod-wireguard wireguard-tools qrencode bc
+      dnf install -y epel-release
+      yum install -y wireguard-tools qrencode bc
     elif [[ "$DISTRO" == "Amazon" ]]; then
       amazon-linux-extras install epel -y
       yum install wireguard-tools bc qrencode -y
@@ -189,7 +189,7 @@ qrencode -t ansiutf8 -l L < $HOME/client-wg0.conf
     # Enable these settings right now, no need to reboot
     sysctl -p
 
-    if [ "$DISTRO" == "CentOS" ]; then
+    if [ "$DISTRO" == "CentOS" ] || [ "$DISTRO" = "RockyLinux" ] ; then
         # Install some basic packages
         yum -y install firewalld
         systemctl enable --now firewalld 
