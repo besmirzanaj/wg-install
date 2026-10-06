@@ -103,14 +103,17 @@ apt_install() {
 
 install_packages() {
     info "Installing Wireguard package and its depencencies"
-    if [[ "$DISTRO" == "Ubuntu 22.04"* ]]; then
+    if [[ "$DISTRO" =~ ^Ubuntu\ (22|24|26)\.04 ]]; then
+        apt_install wireguard qrencode iptables
+    elif [[ "$DISTRO" =~ ^Debian\ GNU/Linux\ (12|13)\  ]]; then
         apt_install wireguard qrencode iptables
     elif [[ "$DISTRO" == "RockyLinux" && "$VER" == "8" ]]; then
         dnf install -y epel-release
-        yum install -y wireguard-tools qrencode
-    elif [[ "$DISTRO" == "RockyLinux" && "$VER" == "9" ]]; then
+        dnf install -y wireguard-tools qrencode iptables
+    elif [[ "$DISTRO" == "RockyLinux" && "$VER" =~ ^(9|10)$ ]]; then
         dnf install -y epel-release
-        yum install -y wireguard-tools qrencode bc
+        # plain "iptables" resolves to iptables-legacy from EPEL here
+        dnf install -y wireguard-tools qrencode iptables-nft
     else
         die "Not supported OS: $DISTRO $VER"
     fi
@@ -216,6 +219,7 @@ show_qr() {
 }
 
 enable_ip_forwarding() {
+    mkdir -p "$(dirname "$SYSCTL_CONFIG")"
     echo "net.ipv4.ip_forward=1
 net.ipv4.conf.all.forwarding=1
 net.ipv6.conf.all.forwarding=1" > "$SYSCTL_CONFIG"
@@ -233,7 +237,7 @@ iptables_add() {
 configure_firewall() {
     if [[ "$DISTRO" == "RockyLinux" ]]; then
         # Install some basic packages
-        yum -y install firewalld
+        dnf install -y firewalld
         systemctl enable --now firewalld
         # Configure Firewall and natting
         firewall-cmd --zone=public --add-port="$SERVER_PORT/udp"

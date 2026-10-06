@@ -2,8 +2,9 @@
 
 [WireGuard](https://www.wireguard.com) [road warrior](http://en.wikipedia.org/wiki/Road_warrior_%28computing%29) installer for:
 
-* Ubuntu 22.04
-* Rocky Linux (8, 9)
+* Ubuntu (22.04, 24.04 and 26.04)
+* Debian (12, 13)
+* Rocky Linux (8, 9, 10)
 
 This script will install automatically the Wireguard server and generate client configuration files for a secure connection.
 
