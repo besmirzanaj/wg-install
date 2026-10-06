@@ -2,11 +2,9 @@
 
 [WireGuard](https://www.wireguard.com) [road warrior](http://en.wikipedia.org/wiki/Road_warrior_%28computing%29) installer for:
 
-* Ubuntu (18.04, 20.04 and 22.04)
-* Debian (10, 11)
-* CentOS (7, 8)
-* Rocky Linux (8, 9)
-* Amazon Linux 2
+* Ubuntu (22.04, 24.04 and 26.04)
+* Debian (12, 13)
+* Rocky Linux (8, 9, 10)
 
 This script will install automatically the Wireguard server and generate client configuration files for a secure connection.
 
@@ -40,21 +38,40 @@ If you are not satisfied and want to remove the VPN tunnel and kernel changes ru
 bash wg-remove.sh
 ```
 
+Set `INTERACTIVE=no` to skip the confirmation prompts (add `DISABLE_FORWARDING=n` to keep IP forwarding enabled).
+The client config files under `$HOME` and the installed packages are left in place.
+
 ## Options
 
 The script can be configured by setting the following environment variables:
 
 * INTERACTIVE - if set to "no", the script will not prompt for user input
-* PRIVATE\_SUBNET - private subnet configuration, "10.9.0.0/24" by default
+* PRIVATE\_SUBNET - private subnet configuration, "10.9.0.0/24" by default. Only /24 subnets are supported
 * SERVER\_HOST - public IP address, detected by default
 * SERVER\_PORT - listening port, picked random by default
-* CLIENT\_DNS - comma serparated DNS servers to use by the client
+* CLIENT\_DNS - comma serparated DNS servers to use by the client, Cloudflare by default
+* WAN\_INTERFACE\_NAME - outgoing network interface used for NAT, detected from the default route by default
+
+Example of an unattended install:
+
+```bash
+INTERACTIVE=no SERVER_HOST=203.0.113.10 SERVER_PORT=51820 bash wg-install.sh
+```
+
+Both scripts stop with a non-zero exit code and an error message when something goes wrong.
 
 ## Client configuration
 
 ### Client configuration files
 
 Each subsequent time you run the script after the first initial install, it will now generate additional client config file under `$HOME`.
+
+```bash
+bash wg-install.sh laptop
+```
+
+Client names can contain letters, digits, `_` and `-`. An existing client config is never overwritten, and a copy of the
+server config is kept at `/etc/wireguard/wg0.conf.bak` before a client is added.
 
 ### Client config on Linux or Windows
 
