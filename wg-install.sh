@@ -79,10 +79,7 @@ validate_subnet() {
 }
 
 detect_distro() {
-    if [[ -e /etc/centos-release ]]; then
-        VER=$(rpm -E '%{rhel}')
-        DISTRO="CentOS"
-    elif [[ -e /etc/rocky-release ]]; then
+    if [[ -e /etc/rocky-release ]]; then
         VER=$(rpm -E '%{rhel}')
         DISTRO="RockyLinux"
     elif [[ -e /etc/debian_version ]]; then
@@ -93,8 +90,6 @@ detect_distro() {
             DISTRO=$(. /etc/os-release && echo "${PRETTY_NAME:-}")
         fi
         [[ -n "$DISTRO" ]] || die "Could not detect the Debian/Ubuntu release"
-    elif [[ -e /etc/system-release ]]; then # support for Amazon Linux
-        DISTRO="Amazon"
     else
         die "Your distribution is not supported (yet)"
     fi
@@ -108,34 +103,14 @@ apt_install() {
 
 install_packages() {
     info "Installing Wireguard package and its depencencies"
-    if [[ "$DISTRO" == "Ubuntu 18.04"* ]]; then
-        add-apt-repository ppa:wireguard/wireguard -y
+    if [[ "$DISTRO" == "Ubuntu 22.04"* ]]; then
         apt_install wireguard qrencode iptables
-    elif [[ "$DISTRO" == "Ubuntu 20.04"* || "$DISTRO" == "Ubuntu 22.04"* ]]; then
-        apt_install wireguard qrencode iptables
-    elif [[ "$DISTRO" == "Debian GNU/Linux 11"* ]]; then
-        apt_install wireguard qrencode iptables
-    elif [[ "$DISTRO" == "Debian GNU/Linux 10"* ]]; then
-        echo 'deb http://deb.debian.org/debian buster-backports main contrib non-free' > /etc/apt/sources.list.d/buster-backports.list
-        echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
-        echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
-        apt_install wireguard qrencode iptables-persistent
-    elif [[ "$DISTRO" == "CentOS" && "$VER" == "7" ]]; then
-        yum install -y epel-release elrepo-release
-        yum install -y yum-plugin-elrepo
-        yum install -y kmod-wireguard wireguard-tools qrencode bc
-    elif [[ "$DISTRO" == "CentOS" && "$VER" == "8" ]]; then
-        yum install -y epel-release elrepo-release
-        yum install -y kmod-wireguard wireguard-tools qrencode bc
     elif [[ "$DISTRO" == "RockyLinux" && "$VER" == "8" ]]; then
         dnf install -y epel-release
         yum install -y wireguard-tools qrencode
     elif [[ "$DISTRO" == "RockyLinux" && "$VER" == "9" ]]; then
         dnf install -y epel-release
         yum install -y wireguard-tools qrencode bc
-    elif [[ "$DISTRO" == "Amazon" ]]; then
-        amazon-linux-extras install epel -y
-        yum install -y wireguard-tools bc qrencode
     else
         die "Not supported OS: $DISTRO $VER"
     fi
@@ -256,7 +231,7 @@ iptables_add() {
 }
 
 configure_firewall() {
-    if [[ "$DISTRO" == "CentOS" || "$DISTRO" == "RockyLinux" ]]; then
+    if [[ "$DISTRO" == "RockyLinux" ]]; then
         # Install some basic packages
         yum -y install firewalld
         systemctl enable --now firewalld
